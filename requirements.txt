@@ -3,3 +3,8 @@ shap
 pylint
 autopep8
 pandas
+ipykernel
+numpy
+seaborn
+matplotlib
+joblib

@@ -1,8 +1,26 @@
-# library doc string
+"""
+Project: Transforming customer churn project from notebook into production ready python code
 
+Author: Evidence Nwangwa
+Date: 2021
+"""
 
-# import libraries
+# Project libraries
+import shap
+import joblib
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
 
+from sklearn.preprocessing import normalize
+from sklearn.model_selection import train_test_split
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+from sklearn.metrics import plot_roc_curve, classification_report
 
 
 
@@ -15,19 +33,39 @@ def import_data(pth):
     output:
             df: pandas dataframe
     '''	
-	pass
-
+    df = pd.read_csv(pth)
+    return df
 
 def perform_eda(df):
-    '''
-    perform eda on df and save figures to images folder
-    input:
-            df: pandas dataframe
+        '''
+        perform eda on df and save figures to images folder
+        input:
+                df: pandas dataframe
 
-    output:
-            None
-    '''
-	pass
+        output:
+                None
+        '''
+        df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
+
+        # churn histogram
+        plt.figure(figsize=(20,10)) 
+        df['Churn'].hist()
+        plt.savefig("images/eda/churn_hist_img.png")
+
+        # customer_age_histogram
+        plt.figure(figsize=(20,10)) 
+        df['Customer_Age'].hist()
+        plt.savefig("images/eda/customer_age_hist_img.png")
+
+        # marital status histogram
+        plt.figure(figsize=(20,10)) 
+        df.Marital_Status.value_counts('normalize').plot(kind='bar');
+        plt.savefig("images/eda/marital_status_hist_img.png")
+
+        # distribution plot
+        plt.figure(figsize=(20,10)) 
+        sns.distplot(df['Total_Trans_Ct'])
+        plt.savefig("images/eda/dist_plot_img.png")        
 
 
 def encoder_helper(df, category_lst, response):
@@ -107,3 +145,8 @@ def train_models(X_train, X_test, y_train, y_test):
               None
     '''
     pass
+
+if __name__ == "__main__":
+        pth = "./data/bank_data.csv"
+        df = import_data(pth)
+        perform_eda(df)

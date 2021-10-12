@@ -65,22 +65,74 @@ def perform_eda(df):
         # distribution plot
         plt.figure(figsize=(20,10)) 
         sns.distplot(df['Total_Trans_Ct'])
-        plt.savefig("images/eda/dist_plot_img.png")        
+        plt.savefig("images/eda/dist_plot_img.png") 
+
+        # heatmap
+        plt.figure(figsize=(20,10)) 
+        sns.heatmap(df.corr(), annot=False, cmap='Dark2_r', linewidths = 2)
+        plt.savefig("images/eda/heat_map_img.png")                   
 
 
 def encoder_helper(df, category_lst, response):
-    '''
-    helper function to turn each categorical column into a new column with
-    propotion of churn for each category - associated with cell 15 from the notebook
+        '''
+        helper function to turn each categorical column into a new column with
+        propotion of churn for each category - associated with cell 15 from the notebook
 
-    input:
-            df: pandas dataframe
-            category_lst: list of columns that contain categorical features
-            response: string of response name [optional argument that could be used for naming variables or index y column]
+        input:
+                df: pandas dataframe
+                category_lst: list of columns that contain categorical features
+                response: string of response name [optional argument that could be used for naming variables or index y column]
 
-    output:
-            df: pandas dataframe with new columns for
-    '''
+        output:
+                df: pandas dataframe with new columns for
+        '''
+
+        # gender encoded column
+        gender_lst = []
+        gender_groups = df.groupby('Gender').mean()['Churn']
+
+        for val in df['Gender']:
+                gender_lst.append(gender_groups.loc[val])
+
+        df['Gender_Churn'] = gender_lst  
+
+        #education encoded column
+        edu_lst = []
+        edu_groups = df.groupby('Education_Level').mean()['Churn']
+
+        for val in df['Education_Level']:
+                edu_lst.append(edu_groups.loc[val])
+
+        df['Education_Level_Churn'] = edu_lst
+
+        #marital encoded column
+        marital_lst = []
+        marital_groups = df.groupby('Marital_Status').mean()['Churn']
+
+        for val in df['Marital_Status']:
+                marital_lst.append(marital_groups.loc[val])
+
+        df['Marital_Status_Churn'] = marital_lst
+
+        #income encoded column
+        income_lst = []
+                income_groups = df.groupby('Income_Category').mean()['Churn']
+
+        for val in df['Income_Category']:
+                income_lst.append(income_groups.loc[val])
+
+        df['Income_Category_Churn'] = income_lst
+
+        #card encoded column
+        card_lst = []
+        card_groups = df.groupby('Card_Category').mean()['Churn']
+
+        for val in df['Card_Category']:
+                card_lst.append(card_groups.loc[val])
+
+        df['Card_Category_Churn'] = card_lst
+
+
     pass
 
 

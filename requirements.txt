@@ -1,5 +1,10 @@
-scikit-learn==0.22
+scikit-learn
 shap
 pylint
 autopep8
 pandas
+ipykernel
+numpy
+seaborn
+matplotlib
+joblib

@@ -34,6 +34,9 @@ def import_data(pth):
             df: pandas dataframe
     '''	
     df = pd.read_csv(pth)
+
+    df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
+
     return df
 
 def perform_eda(df):
@@ -45,8 +48,7 @@ def perform_eda(df):
         output:
                 None
         '''
-        df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
-
+        
         # churn histogram
         plt.figure(figsize=(20,10)) 
         df['Churn'].hist()
@@ -221,10 +223,10 @@ def lrc_plot (X_test, y_test):
         lr_model = joblib.load('./models/logistic_model.pkl')
 
         # logistic regression roc_curve
-        lrc_plot = plot_roc_curve(lr_model, X_test, y_test)
+        plt.plot_roc_curve(lr_model, X_test, y_test)
         plt.savefig("images/results/lrc_roc_curve.png")  
 
-def model_images(X_test, y_train, y_test,y_train_preds_lr,y_train_preds_rf,y_test_preds_lr,y_test_preds_rf):
+def rfc_lrc_roc_curve(X_test, y_test):
 
 
         '''
@@ -249,12 +251,10 @@ def model_images(X_test, y_train, y_test,y_train_preds_lr,y_train_preds_rf,y_tes
 
         # logistic regression roc_curve
         lrc_plot = plot_roc_curve(lr_model, X_test, y_test)
-        plt.savefig("images/results/lrc_roc_curve.png") 
-
         # random forest + logistic regression roc_curve
         plt.figure(figsize=(15, 8))
         ax = plt.gca()
-        rfc_disp = plot_roc_curve(rfc_model, X_test, y_test, ax=ax, alpha=0.8)
+        plot_roc_curve(rfc_model, X_test, y_test, ax=ax, alpha=0.8)
         lrc_plot.plot(ax=ax, alpha=0.8)
         plt.show()
         plt.savefig("images/results/rfc_lrc_roc_curve.png")  
@@ -369,6 +369,7 @@ if __name__ == "__main__":
         perform_eda(df)
 
         category_lst = ['Gender', 'Education_Level', 'Marital_Status', 'Income_Category', 'Card_Category']
+
         response = "Churn"
 
         df2 = encoder_helper(df, category_lst, response)
@@ -389,4 +390,6 @@ if __name__ == "__main__":
         print(y_train_preds_lr, y_test_preds_lr, y_train_preds_rf, y_test_preds_rf )
 
         lrc_plot (X_test, y_test)
+
+        rfc_lrc_roc_curve(X_test, y_test)
 

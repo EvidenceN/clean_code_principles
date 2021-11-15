@@ -11,7 +11,6 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import normalize
 import shap
 import joblib
 import pandas as pd
@@ -82,7 +81,8 @@ def encoder_helper(df, category_lst, response):
     input:
             df: pandas dataframe
             category_lst: list of columns that contain categorical features
-            response: string of response name [optional argument that could be used for naming variables or index y column]
+            response: string of response name [optional argument that could
+            be used for naming variables or index y column]
 
     output:
             df: pandas dataframe with new columns
@@ -217,7 +217,7 @@ def random_forest_model(X_train, X_test, y_train):
     return y_train_preds_rf, y_test_preds_rf
 
 
-def lrc_plot(X_test, y_test):
+def lrc_plot_image(X_test, y_test):
     '''
             Produces roc_curve for linear regression
     input:
@@ -231,7 +231,7 @@ def lrc_plot(X_test, y_test):
     lr_model = joblib.load('./models/logistic_model.pkl')
 
     # logistic regression roc_curve
-    plt.plot_roc_curve(lr_model, X_test, y_test)
+    plot_roc_curve(lr_model, X_test, y_test)
     plt.savefig("images/results/lrc_roc_curve.png")
 
 
@@ -375,52 +375,42 @@ def lrc_classification_report(
     plt.savefig("images/results/logistic_regression_classification_report.png")
 
 
-def feature_importance_plot(model, X_data, output_pth):
-    '''
-    creates and stores the feature importances in pth
-    input:
-            model: model object containing feature_importances_
-            X_data: pandas dataframe of X values
-            output_pth: path to store the figure
-
-    output:
-             None
-    '''
-    pass
-
-
 if __name__ == "__main__":
     # Build Inputs and test code.
-    pth = "./data/bank_data.csv"
-    df = import_data(pth)
+    PATH = "./data/bank_data.csv"
+    dataframe = import_data(PATH)
 
-    perform_eda(df)
+    perform_eda(dataframe)
 
-    category_lst = [
+    category_list = [
         'Gender',
         'Education_Level',
         'Marital_Status',
         'Income_Category',
         'Card_Category']
 
-    response = "Churn"
+    RESP = "Churn"
 
-    df2 = encoder_helper(df, category_lst, response)
+    df2 = encoder_helper(dataframe, category_list, RESP)
 
-    X, y = cols_to_keep(df2)
+    X_data, y_data = cols_to_keep(df2)
 
-    X_train, X_test, y_train, y_test = perform_feature_engineering(X, y)
+    X_train_data, X_test_data, y_train_data, y_test_data = perform_feature_engineering(
+        X_data, y_data)
 
-    print(X_train.head())
-    print(X_test.head())
-    print(y_train[:5])
-    print(y_test[:5])
+    print(X_train_data.head())
+    print(X_test_data.head())
+    print(y_train_data[:5])
+    print(y_test_data[:5])
 
-    y_train_preds_lr, y_test_preds_lr = logistic_model(
-        X_train, X_test, y_train)
+    y_train_preds_lr_data, y_test_preds_lr_data = logistic_model(
+        X_train_data, X_test_data, y_train_data)
 
-    y_train_preds_rf, y_test_preds_rf = random_forest_model(
-        X_train, X_test, y_train)
+    y_train_preds_rf_data, y_test_preds_rf_data = random_forest_model(
+        X_train_data, X_test_data, y_train_data)
 
-    print(y_train_preds_lr, y_test_preds_lr, y_train_preds_rf, y_test_preds_rf)
-
+    print(
+        y_train_preds_lr_data,
+        y_test_preds_lr_data,
+        y_train_preds_rf_data,
+        y_test_preds_rf_data)

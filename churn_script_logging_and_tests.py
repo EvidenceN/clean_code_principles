@@ -5,9 +5,9 @@ Author: Evidence Nwangwa
 Date: 2021
 """
 
-import os
+#import os
 import logging
-from churn_library import *
+from churn_library import import_data, perform_eda,encoder_helper, cols_to_keep, perform_feature_engineering
 
 logging.basicConfig(
     filename='./logs/churn_library.log',

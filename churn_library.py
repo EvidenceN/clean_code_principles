@@ -203,17 +203,10 @@ def random_forest_model(X_train, X_test, y_train):
 
 
 def lrc_plot (X_test, y_test):
-
-
         '''
-                Produces classification report image, ROC_AUC_Curver image, feature importance image, shap tree explainer image. And saves them in a folder. 
+                Produces roc_curve for linear regression
         input:
-                y_train: training response values
                 y_test:  test response values
-                y_train_preds_lr: training predictions from logistic regression
-                y_train_preds_rf: training predictions from random forest
-                y_test_preds_lr: test predictions from logistic regression
-                y_test_preds_rf: test predictions from random forest
                 X_test: The pandas dataframe
 
         output:
@@ -227,17 +220,10 @@ def lrc_plot (X_test, y_test):
         plt.savefig("images/results/lrc_roc_curve.png")  
 
 def rfc_lrc_roc_curve(X_test, y_test):
-
-
         '''
-                Produces classification report image, ROC_AUC_Curver image, feature importance image, shap tree explainer image. And saves them in a folder. 
+                Produces roc_curve for linear regression and random forest. 
         input:
-                y_train: training response values
                 y_test:  test response values
-                y_train_preds_lr: training predictions from logistic regression
-                y_train_preds_rf: training predictions from random forest
-                y_test_preds_lr: test predictions from logistic regression
-                y_test_preds_rf: test predictions from random forest
                 X_test: The pandas dataframe
 
         output:
@@ -259,47 +245,30 @@ def rfc_lrc_roc_curve(X_test, y_test):
         plt.show()
         plt.savefig("images/results/rfc_lrc_roc_curve.png")  
 
-def model_images(X_test, y_train, y_test,y_train_preds_lr,y_train_preds_rf,y_test_preds_lr,y_test_preds_rf):
-
-
-        '''
-                Produces classification report image, ROC_AUC_Curver image, feature importance image, shap tree explainer image. And saves them in a folder. 
-        input:
-                y_train: training response values
-                y_test:  test response values
-                y_train_preds_lr: training predictions from logistic regression
-                y_train_preds_rf: training predictions from random forest
-                y_test_preds_lr: test predictions from logistic regression
-                y_test_preds_rf: test predictions from random forest
-                X_test: The pandas dataframe
-
-        output:
+def shap_tree_image(X_test):
+        """
+        Input: 
+                X_test: The test pandas dataframe
+        Output:
                 None
-        '''
+        """
+        rfc_model = joblib.load('./models/rfc_model.pkl')
+        explainer = shap.TreeExplainer(rfc_model)
+        shap_values = explainer.shap_values(X_test)
+        shap.summary_plot(shap_values, X_test, plot_type="bar")  
 
+        plt.savefig("images/results/rfc_shap_tree_explainer.png")    
+
+def feature_importance_plot(X_test):
+        """
+        Input: 
+                X_test: The test pandas dataframe
+        Output:
+                None
+        """
         # load random forest model. 
         rfc_model = joblib.load('./models/rfc_model.pkl')
-        # load logistic regression model.
-        lr_model = joblib.load('./models/logistic_model.pkl')
 
-        # logistic regression roc_curve
-        lrc_plot = plot_roc_curve(lr_model, X_test, y_test)
-        plt.savefig("images/results/lrc_roc_curve.png") 
-
-        # random forest + logistic regression roc_curve
-        plt.figure(figsize=(15, 8))
-        ax = plt.gca()
-        rfc_disp = plot_roc_curve(rfc_model, X_test, y_test, ax=ax, alpha=0.8)
-        lrc_plot.plot(ax=ax, alpha=0.8)
-        plt.show()
-        plt.savefig("images/results/rfc_lrc_roc_curve.png")    
-
-        # explainer = shap.TreeExplainer(rfc_model)
-        # shap_values = explainer.shap_values(X_test)
-        # shap.summary_plot(shap_values, X_test, plot_type="bar")  
-        # 
-        # plt.savefig("images/results/rfc_shap_tree_explainer.png")           
-        
         # Calculate feature importances
         importances = rfc_model.feature_importances_
         # Sort feature importances in descending order
@@ -324,7 +293,20 @@ def model_images(X_test, y_train, y_test,y_train_preds_lr,y_train_preds_rf,y_tes
 
         plt.savefig("images/results/rfc_feature_importance.png") 
 
-        # RANDOM FOREST classification report 
+
+# RANDOM FOREST classification report 
+
+def rf_classification_report(y_train, y_train_preds_rf,y_test, y_test_preds_rf):
+        """
+        Input: 
+                Y_train - training data
+                y_train_preds_rf - Predicted values from logistic regression using train data set
+                y_test - test data
+                y_test_preds_rf - Predicted values from logistic regression using test data set
+        Output: 
+                None
+        """      
+
         plt.rc('figure', figsize=(5, 5))
         #plt.text(0.01, 0.05, str(model.summary()), {'fontsize': 12}) old approach
         plt.text(0.01, 1.25, str('Random Forest Train'), {'fontsize': 10}, fontproperties = 'monospace')
@@ -333,9 +315,19 @@ def model_images(X_test, y_train, y_test,y_train_preds_lr,y_train_preds_rf,y_tes
         plt.text(0.01, 0.7, str(classification_report(y_train, y_train_preds_rf)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
         plt.axis('off')
 
-        plt.savefig("images/results/random_forest_classification_report.png") 
+        plt.savefig("images/results/random_forest_classification_report.png")          
 
-        # LOGISTIC REGRESSION classification report        
+# LOGISTIC REGRESSION classification report   
+def lrc_classification_report(y_train, y_train_preds_lr,y_test, y_test_preds_lr):
+        """
+        Input: 
+                Y_train - training data
+                y_train_preds_lr - Predicted values from logistic regression using train data set
+                y_test - test data
+                y_test_preds_lr - Predicted values from logistic regression using test data set
+        Output: 
+                None
+        """      
 
         plt.rc('figure', figsize=(5, 5))
         plt.text(0.01, 1.25, str('Logistic Regression Train'), {'fontsize': 10}, fontproperties = 'monospace')

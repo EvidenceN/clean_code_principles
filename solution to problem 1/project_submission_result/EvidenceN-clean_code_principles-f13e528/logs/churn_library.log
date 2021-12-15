@@ -1,0 +1,6 @@
+root - INFO - Testing import_data: SUCCESS
+root - INFO - Dataframe has columns and rows
+root - INFO - Images saved successfully
+root - INFO - Encoding was successful
+root - INFO - Feature engineering was successful
+root - INFO - Model split into train and test was successful
